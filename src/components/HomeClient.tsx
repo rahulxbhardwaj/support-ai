@@ -244,7 +244,7 @@ const HomeClient = ({ name }: { name: string }) => {
               </button>
 
               <button className="bg-white/50 text-gray-800 border border-white/80 px-8 py-3.5 rounded-xl font-medium hover:bg-white/70 transition-all shadow-sm backdrop-blur-md"
-              onClick={() => router.push("/learn-more")}
+              onClick={() => router.push("/learnmore")}
               >
                 Learn More
               </button>
