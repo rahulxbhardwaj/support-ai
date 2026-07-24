@@ -14,7 +14,7 @@ export async function GET(req : NextRequest) {
         const session =  scalekit.authenticateWithCode(code , redirectUri);
         //console.log("Session: ", await session);
         const response = NextResponse.redirect(`${process.env.NEXT_PUBLIC_APP_URL}`);
-        response.cookies.set('access_token',(await session).accessToken, {httpOnly: true, maxAge: 60 * 60 * 24 * 7, path: '/'});
+        response.cookies.set('access_token',(await session).accessToken, {httpOnly: true, maxAge: 60 * 60 * 24 * 7, path: '/' , secure: true});
         return response;
 
     }catch(err){
