@@ -10,8 +10,10 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
     businessName: '',
     supportEmail: '',
     knowledge: '',
+    tokenLeft: '',
+
   });
-  
+
   const [status, setStatus] = useState<'idle' | 'loading' | 'saving' | 'success' | 'error'>('loading');
   const [message, setMessage] = useState('');
 
@@ -33,8 +35,8 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await fetch('/api/settings/get', { 
-          method: 'POST', 
+        const response = await fetch('/api/settings/get', {
+          method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ ownerId })
         });
@@ -46,6 +48,7 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
               businessName: data.businessName || '',
               supportEmail: data.supportEmail || '',
               knowledge: data.knowledge || '',
+              tokenLeft: data.creditsRemaining?.toString() || '0',
             });
           }
         }
@@ -101,38 +104,149 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
     }
   };
 
-   const router = useRouter();
+  const router = useRouter();
 
   return (
     <div className="min-h-screen bg-[#eef1f6] text-gray-900 font-sans overflow-hidden relative selection:bg-gray-300 flex flex-col">
-      
+
       {/* Abstract Background Mesh Gradients */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-200/40 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 animate-pulse pointer-events-none"></div>
       <div className="absolute top-[20%] right-[-10%] w-[40%] h-[60%] bg-purple-200/40 rounded-full mix-blend-multiply filter blur-[120px] opacity-60 pointer-events-none"></div>
       <div className="absolute bottom-[-10%] left-[20%] w-[60%] h-[50%] bg-teal-100/40 rounded-full mix-blend-multiply filter blur-[100px] opacity-70 pointer-events-none"></div>
 
       {/* Navigation */}
-      <nav className="relative z-20 flex items-center justify-between px-8 py-6 max-w-7xl mx-auto w-full">
-        <Link href="/" className="text-xl font-bold tracking-tight text-gray-800 hover:opacity-80 transition-opacity cursor-pointer">
-          Support<span className="text-gray-500 font-normal">AI</span>
-        </Link>
-        
-        {/* Animated Back to Home Button */}
-        <Link href="/" passHref>
-          <motion.button 
-            whileHover={{ scale: 1.05, backgroundColor: "rgba(255, 255, 255, 0.8)" }}
-            whileTap={{ scale: 0.95 }}
-            className="text-sm font-medium text-gray-700 bg-white/50 border border-white/60 px-6 py-2.5 rounded-full backdrop-blur-md shadow-sm transition-colors"
+      <nav
+        className="
+    mb-10
+    bg-white/40
+    backdrop-blur-2xl
+    border border-white/60
+    rounded-2xl
+    px-6 py-4
+    flex items-center justify-between
+    shadow-[0_8px_32px_rgba(31,38,135,0.08)]
+  "
+      >
+        {/* Logo Section */}
+        <div className="flex items-center gap-3">
+          <div
+            className="
+        h-10 w-10
+        rounded-xl
+        bg-gray-900
+        text-white
+        flex items-center justify-center
+        font-bold
+      "
           >
-            Back to Home
-          </motion.button>
-        </Link>
+            AI
+          </div>
+
+          <div>
+            <h2 className="font-semibold text-gray-900">
+              SupportAI
+            </h2>
+
+            <p className="text-xs text-gray-500">
+              Dashboard
+            </p>
+          </div>
+        </div>
+
+        {/* Navigation */}
+        <div className="flex items-center gap-3">
+
+          <Link
+            href="/"
+            className="
+        px-4 py-2
+        rounded-xl
+        text-gray-700
+        hover:bg-white/60
+        transition-all
+      "
+          >
+            Home
+          </Link>
+
+          <Link
+            href="/dashboard"
+            className="
+        px-4 py-2
+        rounded-xl
+        bg-gray-900
+        text-white
+        shadow-lg
+      "
+          >
+            Dashboard
+          </Link>
+
+          <Link
+            href="/dashboard/billing"
+            className="
+        px-4 py-2
+        rounded-xl
+        text-gray-700
+        hover:bg-white/60
+        transition-all
+      "
+          >
+            Billing
+          </Link>
+
+        </div>
+
+        {/* Right Side */}
+        <div className="flex items-center gap-3">
+
+          <div
+            className="
+        inline-flex items-center gap-2
+        px-4 py-2
+        rounded-xl
+        bg-amber-50
+        border border-amber-200
+      "
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-amber-500"></span>
+            </span>
+
+            <span className="text-sm text-gray-500">
+              Credits
+            </span>
+
+            <span className="font-semibold text-amber-700">
+              {formData.tokenLeft}
+            </span>
+          </div>
+
+          <Link
+            href="/dashboard/billing"
+            className="
+        inline-flex items-center gap-2
+        bg-amber-500
+        hover:bg-amber-600
+        text-white
+        px-4 py-2
+        rounded-xl
+        font-medium
+        transition-all
+        shadow-md
+      "
+          >
+            + Buy Credits
+          </Link>
+
+        </div>
       </nav>
 
       {/* Main Dashboard Content */}
       <main className="relative z-10 flex-1 flex flex-col items-center justify-center px-4 sm:px-8 py-12">
-        
-        <motion.div 
+
+        <motion.div
           initial="hidden"
           animate="visible"
           variants={staggerContainer}
@@ -149,7 +263,7 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
           </motion.div>
 
           {/* Glass Form Card */}
-          <motion.div 
+          <motion.div
             variants={fadeUp}
             className="bg-white/40 backdrop-blur-2xl border border-white/60 shadow-[0_8px_32px_0_rgba(31,38,135,0.07)] rounded-[2rem] p-8 md:p-12 relative overflow-hidden"
           >
@@ -162,7 +276,7 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="relative z-10 flex flex-col gap-8">
-                
+
                 <div className="grid md:grid-cols-2 gap-8">
                   {/* Business Name */}
                   <div className="flex flex-col gap-2">
@@ -218,14 +332,13 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
 
                 {/* Status Messages */}
                 {message && (
-                  <motion.div 
+                  <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className={`text-sm px-4 py-3 rounded-xl border backdrop-blur-md ${
-                      status === 'success' 
-                        ? 'bg-green-50/50 border-green-200 text-green-700' 
-                        : 'bg-red-50/50 border-red-200 text-red-700'
-                    }`}
+                    className={`text-sm px-4 py-3 rounded-xl border backdrop-blur-md ${status === 'success'
+                      ? 'bg-green-50/50 border-green-200 text-green-700'
+                      : 'bg-red-50/50 border-red-200 text-red-700'
+                      }`}
                   >
                     {message}
                   </motion.div>
@@ -234,8 +347,8 @@ const DashboardClient = ({ ownerId }: { ownerId: string }) => {
                 {/* Action Buttons */}
                 <div className="flex flex-col sm:flex-row gap-4 mt-2">
                   {/* Submit Button */}
-                  <button 
-                    type="submit" 
+                  <button
+                    type="submit"
                     disabled={status === 'saving'}
                     className="flex-1 bg-gray-900/90 text-white border border-gray-700/50 px-8 py-4 rounded-xl font-medium hover:bg-gray-900 transition-all shadow-lg shadow-gray-900/20 backdrop-blur-md disabled:opacity-70 disabled:cursor-not-allowed flex justify-center items-center gap-2"
                   >

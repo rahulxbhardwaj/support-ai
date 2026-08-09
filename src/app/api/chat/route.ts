@@ -9,10 +9,18 @@ export async function POST(req: NextRequest) {
             return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
         }
         await connectDB();
+
         const setting = await Settings.findOne({ ownerId });
         if (!setting) {
             return NextResponse.json({ error: "Chatbot is not Configured" }, { status: 404 });
         }
+        if(setting.creditsRemaining <= 0){
+            return NextResponse.json({error : "No Credits Remaining. Please visit the website for more information."}, {status: 403});
+        }
+
+
+
+
         const KNOWLEDGE = `
         Bussiness Name: ${setting.businessName || "N/A"}
         Bussiness Description: ${setting.knowledge || "N/A"}
@@ -44,6 +52,12 @@ export async function POST(req: NextRequest) {
             model: "gemini-2.5-flash",
             input: prompt,
             });
+        
+        await Settings.updateOne({ownerId} , {$inc: {
+            creditsRemaining: -1,
+            creditsUsed: 1 
+    }});
+
 
         const response =  NextResponse.json(interaction.output_text, { status: 200 });
         response.headers.set("Access-Control-Allow-Origin", "*");

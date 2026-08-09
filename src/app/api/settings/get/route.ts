@@ -15,7 +15,6 @@ export async function POST(req: NextRequest) {
     }
 
     const settings = await Settings.findOne({ ownerId });
-
     return NextResponse.json(settings, { status: 200 });
   } catch (error) {
     console.error(error);
